@@ -25,17 +25,21 @@ year = 2008
 
 def test_read_string():
     bib = pybibs.read_string(bib_string)
-    assert 'key1' in bib
-    entry = bib['key1']
+    entry = bib[0]
+    assert entry['key'] == 'key1'
     assert entry['type'] == 'article'
-    assert entry['author'] == 'Israel, Moshe'
-    assert entry['year'] == '2008'
+    assert entry['fields']['author'] == 'Israel, Moshe'
+    assert entry['fields']['year'] == '2008'
 
 
 def test_read_file():
     filepath = os.path.join('tests', 'data', 'huge.bib')
     bib = pybibs.read_file(filepath)
-    assert 'bailenson2005digital' in bib
+    for entry in bib:
+        if entry['key'] == 'bailenson2005digital':
+            break
+    else:
+        raise AssertionError('Couldn\'t find bailenson2005digital in parsed data')
 
 
 def test_split_entries():
@@ -45,10 +49,8 @@ def test_split_entries():
 
 def test_entry_contains_key_and_type():
     bib = pybibs.read_string(bib_string)
-    assert 'key' in bib['key1']
-    assert bib['key1']['key'] == 'key1'
-    assert 'type' in bib['key1']
-    assert bib['key1']['type'] == 'article'
+    assert bib[0]['key'] == 'key1'
+    assert bib[0].get('type') == 'article'
 
 
 def test_parse_raw_key_values():

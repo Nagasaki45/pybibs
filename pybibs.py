@@ -12,15 +12,15 @@ def write_file(bib, filepath):
 
 
 def read_string(string):
-    bib = {}
+    bib = []
     for raw_entry in _split_entries(string):
         entry = read_entry_string(raw_entry)
-        bib[entry['key']] = entry
+        bib.append(entry)
     return bib
 
 
 def read_entry_string(raw_entry):
-    entry = {}
+    entry = {'fields': {}}
     raw_entry = raw_entry.strip()
     assert raw_entry[0] == '@'
     raw_entry = raw_entry[1:]
@@ -29,14 +29,14 @@ def read_entry_string(raw_entry):
     assert rest[-1] == '}'
     inner = rest[:-1]
     for k, v in _parse_raw_key_values(inner):
-        entry[k] = v
+        entry['fields'][k] = v
     entry['key'] = key
     entry['type'] = type_
     return entry
 
 
 def write_string(bib):
-    return '\n\n'.join(_write_entry(entry) for entry in bib.values())
+    return '\n\n'.join(_write_entry(entry) for entry in bib)
 
 
 def _split_entries(string):
@@ -80,9 +80,7 @@ def _parse_value(value):
 def _write_entry(entry):
     parts = []
     parts += ['@', entry['type'], '{', entry['key']]
-    for k, v in entry.items():
-        if k in ['key', 'type']:
-            continue
+    for k, v in entry['fields'].items():
         parts += [',\n', '  ', k, ' = {', v, '}']
     parts.append('\n}')
     return ''.join(parts)
