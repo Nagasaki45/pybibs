@@ -10,6 +10,7 @@ pybibs = {editable = true, path = "."}
 wheel = "*"
 twine = "*"
 pytest = "*"
+bumpversion = "*"
 
 [requires]
 python_version = "3.7"
